@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="css/swiper-bundle.css" />
+    <link rel="stylesheet" href="css/全局样式表.css" />
+    <link rel="stylesheet" href="css/index.css" />
+  </head>
+  <body>
+    <!-- 黑色导航栏 -->
+    <div class="header">
+      <div class="wrap">
+        <a href="index.html" class="active">首页</a>
+        <a href="yuezhang.html">乐章</a>
+      </div>
+    </div>
+
+    <!-- 轮播图开始 -->
+    <div class="banner">
+      <div class="swiper-container" id="black">
+        <div class="swiper-wrapper"></div>
+        <!-- 如果需要分页器 -->
+        <div class="swiper-pagination"></div>
+
+        <!-- 如果需要导航按钮 -->
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+      </div>
+    </div>
+
+    <!-- 乐章 -->
+    <div class="yuezhang">
+      <div class="wrap">
+        <h1>乐章</h1>
+        <div class="swiper-container" id="yuezhang">
+          <div class="swiper-wrapper"></div>
+          <!-- 如果需要分页器 -->
+          <div class="swiper-pagination"></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/jQuery 1.12.4.js"></script>
+    <script src="js/swiper-bundle.js"></script>
+    <script src="js/index.js"></script>
+    <script>
+      function lunbo2() {
+        var mySwiper = new Swiper("#yuezhang", {
+          loop: true, // 循环模式选项
+
+          // 如果需要分页器
+          pagination: {
+            el: ".swiper-pagination",
+          },
+          //开启自动播放
+          autoplay: {
+            delay: 4000,
+            stopOnLastSlide: false,
+            disableOnInteraction: true,
+          },
+        });
+      }
+
+      $.ajax({
+        type: "get",
+        url: "http://iwenwiki.com/api/blueberrypai/getIndexMovement.php",
+        success: function (res) {
+          // console.log(res.movement);
+          var arr = res.movement;
+          var max = Math.ceil(arr.length / 4);
+          var n = 0;
+          for (var i = 0; i < max; i++) {
+            //创建轮播页面;
+            var yuezhangPage = $("<div class='swiper-slide'><ul></ul></div>");
+            var str = "";
+            //创建4个li
+            for (j = 0; j < 4; j++) {
+              // console.log(arr[n].img);   //http://iwen.wiki/sxtstu/blueberrypai/indexImg/yuezhangPic_01.jpg
+              var newImg = arr[n].img.replace(
+                /iwen.wiki\/sxtstu/g,
+                "iwenwiki.com/api"
+              );
+              str += `<li>
+                                <img src=${newImg} alt="">
+                                <div class="yuezhangDesc">
+                                    <h2>${arr[n].title}</h2>
+                                    <p>${arr[n].content}</p>
+                                </div>
+                            </li>`;
+              n++;
+            }
+            //将创建好的str添加到yuezhangPage
+            yuezhangPage.html(str);
+            //最后将所有内容添加到父元素下
+            $(".yuezhang .swiper-wrapper").append(yuezhangPage);
+          }
+
+          lunbo2();
+        },
+      });
+    </script>
+  </body>
+</html>
